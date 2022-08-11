@@ -24,10 +24,11 @@ public class HelloServerAioHandler implements ServerAioHandler {
    */
   @Override
   public Packet decode(ByteBuffer buffer, ChannelContext channelContext) throws AioDecodeException {
-    log.info("decode");
     int readableLength = buffer.limit() - buffer.position();
+    log.info("decode readableLength:{}",readableLength);
     // 收到的数据组不了业务包，则返回null以告诉框架数据不够
     if (readableLength < HelloPacket.HEADER_LENGTH) {
+      log.info("长度不够");
       return null;
     }
 
