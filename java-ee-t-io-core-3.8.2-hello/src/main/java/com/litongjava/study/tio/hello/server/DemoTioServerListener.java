@@ -1,19 +1,25 @@
 package com.litongjava.study.tio.hello.server;
 
+import java.nio.ByteBuffer;
+
 import org.tio.core.ChannelContext;
 import org.tio.core.Tio;
+import org.tio.core.TioConfig;
+import org.tio.core.exception.TioDecodeException;
 import org.tio.core.intf.Packet;
-import org.tio.server.intf.ServerAioListener;
+import org.tio.server.intf.TioServerHandler;
+import org.tio.server.intf.TioServerListener;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Ping E Lee
  */
- 
+
 @Slf4j
-public class DemoTioServerListener implements ServerAioListener {
-  public void onAfterConnected(ChannelContext channelContext, boolean isConnected, boolean isReconnect) throws Exception {
+public class DemoTioServerListener implements TioServerListener {
+  public void onAfterConnected(ChannelContext channelContext, boolean isConnected, boolean isReconnect)
+      throws Exception {
   }
 
   public void onAfterDecoded(ChannelContext channelContext, Packet packet, int packetSize) throws Exception {
@@ -37,8 +43,9 @@ public class DemoTioServerListener implements ServerAioListener {
    * @param isRemove
    * @throws Exception
    */
-   
-  public void onBeforeClose(ChannelContext channelContext, Throwable throwable, String remark, boolean isRemove) throws Exception {
+
+  public void onBeforeClose(ChannelContext channelContext, Throwable throwable, String remark, boolean isRemove)
+      throws Exception {
     log.info("关闭后清除认证信息");
     Tio.unbindToken(channelContext);
   }
@@ -54,5 +61,4 @@ public class DemoTioServerListener implements ServerAioListener {
     Tio.unbindToken(channelContext);
     return false;
   }
-
 }

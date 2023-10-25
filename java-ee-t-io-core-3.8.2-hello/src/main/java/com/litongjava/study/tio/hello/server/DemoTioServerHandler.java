@@ -7,7 +7,7 @@ import org.tio.core.Tio;
 import org.tio.core.TioConfig;
 import org.tio.core.exception.TioDecodeException;
 import org.tio.core.intf.Packet;
-import org.tio.server.intf.ServerAioHandler;
+import org.tio.server.intf.TioServerHandler;
 
 import com.litongjava.study.tio.hello.common.DemoPacket;
 
@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @Slf4j
-public class DemoTioServerHandler implements ServerAioHandler {
+public class DemoTioServerHandler implements TioServerHandler {
 
   public Packet decode(ByteBuffer buffer, int limit, int position, int readableLength, ChannelContext channelContext) throws TioDecodeException {
     int remaining = buffer.remaining();
