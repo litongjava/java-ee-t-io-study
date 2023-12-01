@@ -1,0 +1,145 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>com.litongjava</groupId>
+  <artifactId>tio-http-server-2.4.0-hello</artifactId>
+  <version>1.0</version>
+  
+  <name>tio-boot</name>
+  <description>Java高性能Web框架</description>
+  <url>https://github.com/litongjava/tio-boot</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>1.8</java.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <tio-version>2.4.0.v20180508-RELEASE</tio-version>
+    <logback-version>1.2.3</logback-version>
+    <lombok-version>1.18.24</lombok-version>
+  </properties>
+  <dependencies>
+
+    <dependency>
+      <groupId>org.t-io</groupId>
+      <artifactId>tio-http-server</artifactId>
+      <version>${tio-version}</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>com.litongjava</groupId>
+      <artifactId>jfinal-aop</artifactId>
+      <version>1.0.4</version>
+    </dependency>
+
+    <!-- slf4j-logback绑定 -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok-version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <licenses>
+    <license>
+      <name>MIT</name>
+      <url>https://gitee.com/ppnt/license/raw/master/LICENSE</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>litongjava</id>
+      <name>Ping E Lee</name>
+      <email>litongjava@qq.com</email>
+      <url>https://github.com/litongjava</url>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git@github.com:litongjava/final-aop.git</connection>
+    <developerConnection>scm:git:git@github.com:litongjava/final-aop.git</developerConnection>
+    <url>git@github.com:litongjava/final-aop.git</url>
+  </scm>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+  <build>
+    <plugins>
+      <!-- Source -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Javadoc -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+        <configuration>
+          <!-- 添加这个压制JavaDoc检查 -->
+          <additionalparam>-Xdoclint:none</additionalparam>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- GPG mvn clean deploy -P release -Dgpg.passphrase=YourPassphase -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.7</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

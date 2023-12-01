@@ -13,7 +13,7 @@ public class HelloPacket extends Packet {
   // 消息头的长度
   public static final int HEADER_LENGTH = 4;
   // 编码格式
-  public static final String CHARSET="utf-8";
+   public static final String CHARSET="utf-8";
 
   private byte[] body;
   
