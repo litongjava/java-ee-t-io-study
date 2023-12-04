@@ -13,31 +13,25 @@ import org.tio.websocket.common.WsResponse;
 import org.tio.websocket.common.WsSessionContext;
 import org.tio.websocket.server.handler.IWsMsgHandler;
 
-import com.litongjava.tio.boot.server.TioBootServerConstants;
-
 /**
  * 2017年6月28日 下午5:32:38
  */
-public class ShowcaseWsMsgHandler implements IWsMsgHandler {
+public class IndexWebSocketHandler implements IWsMsgHandler {
   /**
    * 用于群聊的group id
    */
   public static final String GROUP_ID = "showcase-websocket";
+  public static final String CHARSET = "utf-8";
 
-  private static Logger log = LoggerFactory.getLogger(ShowcaseWsMsgHandler.class);
+  private static Logger log = LoggerFactory.getLogger(IndexWebSocketHandler.class);
 
-  public static final ShowcaseWsMsgHandler me = new ShowcaseWsMsgHandler();
-
-  private ShowcaseWsMsgHandler() {
-
-  }
 
   /**
    * 握手时走这个方法，业务可以在这里获取cookie，request参数等
    */
   @Override
   public HttpResponse handshake(HttpRequest request, HttpResponse httpResponse, ChannelContext channelContext)
-      throws Exception {
+    throws Exception {
     String clientip = request.getClientIp();
     String myname = request.getParam("name");
 
@@ -47,7 +41,7 @@ public class ShowcaseWsMsgHandler implements IWsMsgHandler {
     return httpResponse;
   }
 
-  /** 
+  /**
    * @param httpRequest
    * @param httpResponse
    * @param channelContext
@@ -56,14 +50,14 @@ public class ShowcaseWsMsgHandler implements IWsMsgHandler {
    */
   @Override
   public void onAfterHandshaked(HttpRequest httpRequest, HttpResponse httpResponse, ChannelContext channelContext)
-      throws Exception {
+    throws Exception {
     // 绑定到群组，后面会有群发
     Tio.bindGroup(channelContext, GROUP_ID);
     int count = Tio.getAll(channelContext.tioConfig).getObj().size();
 
     String msg = "{name:'admin',message:'" + channelContext.userid + " 进来了，共【" + count + "】人在线" + "'}";
     // 用tio-websocket，服务器发送到客户端的Packet都是WsResponse
-    WsResponse wsResponse = WsResponse.fromText(msg, TioBootServerConstants.CHARSET);
+    WsResponse wsResponse = WsResponse.fromText(msg, CHARSET);
     // 群发
     Tio.sendToGroup(channelContext.tioConfig, GROUP_ID, wsResponse);
   }
@@ -91,12 +85,10 @@ public class ShowcaseWsMsgHandler implements IWsMsgHandler {
   @Override
   public Object onText(WsRequest wsRequest, String text, ChannelContext channelContext) throws Exception {
     WsSessionContext wsSessionContext = (WsSessionContext) channelContext.get();
-    HttpRequest httpRequest = wsSessionContext.getHandshakeRequest();// 获取websocket握手包
-    if (log.isDebugEnabled()) {
-      log.debug("握手包:{}", httpRequest);
-    }
+    String path = wsSessionContext.getHandshakeRequest().getRequestLine().path;
+    log.info("path:{}", path);
 
-//		log.info("收到ws消息:{}", text);
+    //log.info("收到ws消息:{}", text);
 
     if (Objects.equals("心跳内容", text)) {
       return null;
@@ -105,11 +97,11 @@ public class ShowcaseWsMsgHandler implements IWsMsgHandler {
     // String msg = channelContext.getClientNode().toString() + " 说：" + text;
     String msg = "{name:'" + channelContext.userid + "',message:'" + text + "'}";
     // 用tio-websocket，服务器发送到客户端的Packet都是WsResponse
-    WsResponse wsResponse = WsResponse.fromText(msg, TioBootServerConstants.CHARSET);
+    WsResponse wsResponse = WsResponse.fromText(msg, CHARSET);
     // 群发
     Tio.sendToGroup(channelContext.tioConfig, GROUP_ID, wsResponse);
 
-    // 返回值是要发送给客户端的内容，一般都是返回null
+    // 返回值是要发送给客户端的内容，一般都是返回null,返回为null,handler不会发送数据
     return null;
   }
 
