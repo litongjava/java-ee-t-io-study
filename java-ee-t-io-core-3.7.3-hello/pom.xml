@@ -22,6 +22,11 @@
       <version>3.7.3.v20210706-RELEASE</version>
     </dependency>
     <dependency>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
+      <version>3.0.3</version>
+    </dependency>
+    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.16.16</version>
@@ -127,6 +132,10 @@
                 -H:+RemoveSaturatedTypeFlows
                 --allow-incomplete-classpath
                 --no-fallback
+                --enable-all-security-services
+                --report-unsupported-elements-at-runtime
+                -H:+RemoveSaturatedTypeFlows
+                -H:ReflectionConfigurationFiles=reflect-config.json
               </buildArgs>
             </configuration>
           </plugin>
