@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>top.ppnt</groupId>
   <artifactId>java-ee-t-io-core-3.7.3-hello</artifactId>
@@ -9,6 +8,11 @@
     <java.version>1.8</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
+
+    <graalvm.version>23.1.1</graalvm.version>
+    <mica-mqtt.version>2.2.6</mica-mqtt.version>
+    <tinylog.version>2.6.2</tinylog.version>
+    <mainClass.server>com.litongjava.study.tio.hello.server.DemoTioServerStarter</mainClass.server>
   </properties>
   <dependencies>
     <dependency>
@@ -18,15 +22,116 @@
       <version>3.7.3.v20210706-RELEASE</version>
     </dependency>
     <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.2.3</version>
-    </dependency>
-    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.16.16</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <finalName>${project.artifactId}</finalName>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>jar</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <!-- 非 GraalVM 环境用 tinylog -->
+        <dependency>
+          <groupId>org.tinylog</groupId>
+          <artifactId>slf4j-tinylog</artifactId>
+          <version>${tinylog.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.tinylog</groupId>
+          <artifactId>tinylog-impl</artifactId>
+          <version>${tinylog.version}</version>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.2.0</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.1.1</version>
+            <configuration>
+              <archive>
+                <manifest>
+                  <mainClass>${mainClass.client}</mainClass>
+                </manifest>
+              </archive>
+              <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+              </descriptorRefs>
+              <appendAssemblyId>false</appendAssemblyId>
+            </configuration>
+            <executions>
+              <execution>
+                <id>make-assembly</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>mqtt-client-graal</id>
+      <dependencies>
+        <!-- GraalVM 环境使用 jdk log -->
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-jdk14</artifactId>
+          <version>1.7.31</version>
+        </dependency>
+        <!-- GraalVM -->
+        <dependency>
+          <groupId>org.graalvm.sdk</groupId>
+          <artifactId>graal-sdk</artifactId>
+          <version>${graalvm.version}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <finalName>mqtt-client-graal</finalName>
+        <plugins>
+          <plugin>
+            <groupId>org.graalvm.nativeimage</groupId>
+            <artifactId>native-image-maven-plugin</artifactId>
+            <version>21.2.0</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>native-image</goal>
+                </goals>
+                <phase>package</phase>
+              </execution>
+            </executions>
+            <configuration>
+              <skip>false</skip>
+              <imageName>mqtt-client-graalvm</imageName>
+              <mainClass>${mainClass.server}</mainClass>
+              <buildArgs>
+                -H:+RemoveSaturatedTypeFlows
+                --allow-incomplete-classpath
+                --no-fallback
+              </buildArgs>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

@@ -14,6 +14,7 @@ public class DemoTioServerStarter {
    * 启动程序入口
    */
   public static void main(String[] args) throws IOException {
+    long start = System.currentTimeMillis();
     // handler, 包括编码、解码、消息处理
     ServerAioHandler serverHandler = new DemoTioServerHandler();
     // 事件监听器，可以为null，但建议自己实现该接口，可以参考showcase了解些接口
@@ -27,5 +28,7 @@ public class DemoTioServerStarter {
 
     // 启动服务
     tioServer.start(null, Const.PORT);
+    long end = System.currentTimeMillis();
+    System.out.println((end - start) + "ms");
   }
 }
