@@ -26,5 +26,11 @@
   {
     "name": "com.github.benmanes.caffeine.cache.PSAMS",
     "allDeclaredConstructors": true
+  },
+  {
+    "name" : "org.tio.utils.caffeine.CaffeineUtils$1",
+    "methods" : [
+      { "name" : "loadAll", "parameterTypes" : ["java.util.Set"] }
+    ]
   }
 ]
